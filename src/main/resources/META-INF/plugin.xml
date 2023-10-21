@@ -1,0 +1,20 @@
+<idea-plugin>
+    <id>com.github.bannirui.orm-generator</id>
+    <name>Orm Generator</name>
+    <version>1.0-SNAPSHOT</version>
+    <vendor email="Bannirui@outlook.com" url="https://github.com/Bannirui/orm-generator">Bannirui</vendor>
+
+    <description><![CDATA[
+    Java code kit to generate basic snippet.<br>
+    <ol>
+      <li>Maven project template</li>
+      <li>JNI template via Java Interface prototype</li>
+      <li>DAL for Mybatis</li>
+    </ol>
+  ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+    </extensions>
+</idea-plugin>
