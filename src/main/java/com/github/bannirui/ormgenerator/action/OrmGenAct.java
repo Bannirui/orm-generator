@@ -1,5 +1,7 @@
 package com.github.bannirui.ormgenerator.action;
 
+import com.github.bannirui.ormgenerator.bean.Table;
+import com.github.bannirui.ormgenerator.dialog.EntryDialog;
 import com.intellij.database.psi.DbTable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -17,6 +19,11 @@ public class OrmGenAct extends AnAction {
 			Messages.showWarningDialog("You should at least select one table.", "Notice");
 			return;
 		}
-		Messages.showInfoMessage(e.getProject(), t.getName(), "Table Name");
+		Table table = new Table(t);
+		EntryDialog entry = new EntryDialog(e.getProject(), table);
+		if (entry.showAndGet()) {
+			// press OK button
+			// TODO: 10/23/23
+		}
 	}
 }

@@ -13,6 +13,8 @@
     </ol>
   ]]></description>
 
+	<depends>com.intellij.modules.lang</depends>
+	<depends>com.intellij.modules.java</depends>
     <depends>com.intellij.modules.platform</depends>
 	<depends>com.intellij.database</depends>
 
@@ -21,8 +23,8 @@
     <actions>
 		<action id="com.github.bannirui.ormgenerator.action.OrmGenAct"
 				class="com.github.bannirui.ormgenerator.action.OrmGenAct"
-				text="Orm Generator"
-				description="Orm generator">
+				text="ORM Generator"
+				description="ORM generator">
 			<add-to-group group-id="DatabaseViewPopupMenu" anchor="first"/>
 		</action>
 	</actions>
