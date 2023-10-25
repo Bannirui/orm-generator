@@ -1,16 +1,16 @@
 <idea-plugin>
     <id>com.github.bannirui.orm-generator</id>
-    <name>Orm Generator</name>
+    <name>ORM Generator</name>
     <version>1.0-SNAPSHOT</version>
     <vendor email="Bannirui@outlook.com" url="https://github.com/Bannirui/orm-generator">Bannirui</vendor>
 
     <description><![CDATA[
-    Java code kit to generate basic snippet.<br>
-    <ol>
-      <li>Maven project template</li>
-      <li>JNI template via Java Interface prototype</li>
-      <li>DAL for Mybatis</li>
-    </ol>
+    A must have database tool support with IDEA.<br>
+    Java Devkit to generate basic snippet focusing on DAL.<br>
+    <ul>
+      <li>Provide or customize source template</li>
+      <li>Action to generate DAL, including model file, dao file and mapper file</li>
+    </ul>
   ]]></description>
 
 	<depends>com.intellij.modules.lang</depends>

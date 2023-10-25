@@ -57,12 +57,12 @@ public class Table {
 		for (DasColumn col : cols) {
 			String lowerUnderscoreName = col.getName();
 			String lowerCamelName = StrUtil.lowerScore2LowerCamel(lowerUnderscoreName);
-			String dbType = col.getDataType().typeName;
+			String dbType = col.getDataType().typeName.toUpperCase();
 			String comment = col.getComment();
 			boolean primary = DasUtil.isPrimary(col);
 			String[] jdkType = TYPE_MAP.get(dbType);
 			if (null == jdkType) {
-				throw new IllegalArgumentException("JdbcType and JdkType mapping not support.");
+				throw new IllegalArgumentException("JdbcType[" + dbType + "] and JdkType mapping not support.");
 			}
 			this.columns.add(new Column(lowerUnderscoreName, lowerCamelName, dbType, jdkType[0], jdkType[1], comment, primary));
 		}
