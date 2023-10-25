@@ -3,7 +3,10 @@ package ${dao_package_name};
 import ${model_package_name}.${class_name};
 
 /**
+* ${table_name}.
+<#if table_comment?exists>
 * ${table_comment}.
+</#if>
 *
 * @since ${date}
 * @author ${author}

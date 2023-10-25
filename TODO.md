@@ -3,4 +3,6 @@
 - [X] project init
 - [X] access to database tool to query info about table, sdk least requirement is IU
 - [X] freemarker
-- [ ] dialog access and collect param
+- [X] dialog access and collect param
+- [X] refactor the generator code
+- [ ] how to fulfill the panel text field with module path(get the module path)

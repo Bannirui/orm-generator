@@ -6,7 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * ${table_name}.
+<#if table_comment?exists>
  * ${table_comment}.
+</#if>
  *
  * @since ${date}
  * @author ${author}

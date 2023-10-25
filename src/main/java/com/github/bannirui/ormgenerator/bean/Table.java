@@ -18,6 +18,7 @@ public class Table {
 		TYPE_MAP.put("BIT", new String[] {"Boolean", "java.lang.Boolean"});
 		TYPE_MAP.put("TINYINT", new String[] {"Integer", "java.lang.Integer"});
 		TYPE_MAP.put("SMALLINT", new String[] {"Integer", "java.lang.Integer"});
+		TYPE_MAP.put("INT", new String[] {"Integer", "java.lang.Integer"});
 		TYPE_MAP.put("MEDIUMINT", new String[] {"Integer", "java.lang.Integer"});
 		TYPE_MAP.put("BIGINT", new String[] {"Long", "java.lang.Long"});
 		TYPE_MAP.put("FLOAT", new String[] {"Float", "java.lang.Float"});

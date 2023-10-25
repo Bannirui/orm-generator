@@ -20,10 +20,6 @@ public class OrmGenAct extends AnAction {
 			return;
 		}
 		Table table = new Table(t);
-		EntryDialog entry = new EntryDialog(e.getProject(), table);
-		if (entry.showAndGet()) {
-			// press OK button
-			// TODO: 10/23/23
-		}
+		new EntryDialog(e.getProject(), table).show();
 	}
 }
