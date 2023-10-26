@@ -13,7 +13,7 @@
     </ul>
   ]]></description>
 
-	<change-notes>
+	<change-notes><![CDATA[
 		<p>1.0.1</p>
 		<ul>
 			<li>rm default plugin icon.</li>
@@ -24,7 +24,7 @@
 			<li>Type dest file path manually.</li>
 			<li>Pre-prepared source template.</li>
 		</ul>
-	</change-notes>
+	]]></change-notes>
 
 	<depends>com.intellij.modules.lang</depends>
 	<depends>com.intellij.modules.java</depends>
