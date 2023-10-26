@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.github.bannirui.orm-generator</id>
     <name>ORM Generator</name>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1</version>
     <vendor email="Bannirui@outlook.com" url="https://github.com/Bannirui/orm-generator">Bannirui</vendor>
 
     <description><![CDATA[
@@ -12,6 +12,19 @@
       <li>Action to generate DAL, including model file, dao file and mapper file</li>
     </ul>
   ]]></description>
+
+	<change-notes>
+		<p>1.0.1</p>
+		<ul>
+			<li>rm default plugin icon.</li>
+		</ul>
+
+		<p>1.0.0</p>
+		<ul>
+			<li>Type dest file path manually.</li>
+			<li>Pre-prepared source template.</li>
+		</ul>
+	</change-notes>
 
 	<depends>com.intellij.modules.lang</depends>
 	<depends>com.intellij.modules.java</depends>
