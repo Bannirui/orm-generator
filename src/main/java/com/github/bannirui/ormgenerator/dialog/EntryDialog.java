@@ -8,10 +8,12 @@ import com.github.bannirui.ormgenerator.freemarker.impl.ModelGenerator;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VirtualFile;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -19,6 +21,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -182,9 +185,18 @@ public class EntryDialog extends DialogWrapper {
 	}
 
 	private void selectModule(String moduleName) {
+		if (StringUtils.isBlank(moduleName)) {
+			return;
+		}
 		Module m = this.moduleMap.get(moduleName);
-		String path = m.getModuleFilePath();
+		VirtualFile vf = ProjectUtil.guessModuleDir(m);
+		if (Objects.isNull(vf)) {
+			return;
+		}
+		String path = vf.getPath();
+		this.modelPackageVal.setText("com.model");
 		this.modelSrcDirVal.setText(path);
+		this.daoPackageVal.setText("com.dao");
 		this.daoSrcDirVal.setText(path);
 		this.mapperDirVal.setText("mapper");
 		this.mapperResourcesDir.setText(path);
@@ -211,47 +223,44 @@ public class EntryDialog extends DialogWrapper {
 
 	private void collectProfile() {
 		// Collect user profile
+		// Just suggest assign module
 		String moduleName = (String) this.moduleComboBox.getSelectedItem();
-		if (StringUtils.isBlank(moduleName)) {
-			Messages.showWarningDialog("You should select a module.", "Notice");
-			return;
-		}
 		this.profile.setModuleName(moduleName);
 		String modelPackage = this.modelPackageVal.getText();
 		if (StringUtils.isBlank(modelPackage)) {
 			Messages.showWarningDialog("Model package could not be none.", "Notice");
 			return;
 		}
-		this.profile.setModelPackage(modelPackage);
+		this.profile.setModelPackage(modelPackage.replaceAll(" ", ""));
 		String modelSrcDir = this.modelSrcDirVal.getText();
 		if (StringUtils.isBlank(modelSrcDir)) {
 			Messages.showWarningDialog("Model source dir could not be none.", "Notice");
 			return;
 		}
-		this.profile.setModelSrcDir(modelSrcDir);
+		this.profile.setModelSrcDir(modelSrcDir.replaceAll(" ", ""));
 		String daoPackage = this.daoPackageVal.getText();
 		if (StringUtils.isBlank(daoPackage)) {
 			Messages.showWarningDialog("Dao package could not be none.", "Notice");
 			return;
 		}
-		this.profile.setDaoPackage(daoPackage);
+		this.profile.setDaoPackage(daoPackage.replaceAll(" ", ""));
 		String daoSrcDir = this.daoSrcDirVal.getText();
 		if (StringUtils.isBlank(daoSrcDir)) {
 			Messages.showWarningDialog("Dao source dir could not be none.", "Notice");
 			return;
 		}
-		this.profile.setDaoSrcDir(daoSrcDir);
+		this.profile.setDaoSrcDir(daoSrcDir.replaceAll("f", ""));
 		String mapperDir = this.mapperDirVal.getText();
 		if (StringUtils.isBlank(mapperDir)) {
 			Messages.showWarningDialog("Mapper directory could not be none.", "Notice");
 			return;
 		}
-		this.profile.setMapperDir(mapperDir);
+		this.profile.setMapperDir(mapperDir.replaceAll(" ", ""));
 		String mapperResourcesDir = this.mapperResourcesDir.getText();
 		if (StringUtils.isBlank(mapperResourcesDir)) {
 			Messages.showWarningDialog("Mapper resource directory could not be none.", "Notice");
 			return;
 		}
-		this.profile.setMapperResourcesDir(mapperResourcesDir);
+		this.profile.setMapperResourcesDir(mapperResourcesDir.replaceAll(" ", ""));
 	}
 }
