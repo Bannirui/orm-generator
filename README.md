@@ -1,8 +1,15 @@
+<div align="center">
+
 ## ORM-GENERATOR
 
 Java DevKit, help to generate ORM(mybatis) code.
+<br /><br />
+<br />
 
-[TODO list](./TODO.md)
+[🌐 简体中文](README.zh-CN.md)
+</div>
+
+[ToDo list](./TODO.md)
 
 ### Quick Start
 
