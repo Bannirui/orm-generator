@@ -5,6 +5,9 @@
 - [X] freemarker
 - [X] dialog access and collect param
 - [X] refactor the generator code
-- [ ] how to fulfill the panel text field with module path(get the module path)
-- [ ] trim the path if blank exists
+- [X] how to fulfill the panel text field with module path(get the module path)
+- [X] trim the path if blank exists
 - [ ] state persistence
+- [X] more mysql field type
+- [ ] select box for package since selecting the module
+- [ ] rm Lombok annotation

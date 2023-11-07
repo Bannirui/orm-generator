@@ -12,22 +12,36 @@ import java.util.Map;
 
 public class Table {
 
+	/**
+	 * <p>mapping between mysql field type and java lang type.</p>
+	 * <ul>
+	 *     <li>key-mysql field, and upper</li>
+	 *     <li>value-java lang</li>
+	 * </ul>
+	 */
 	private static final Map<String, String[]> TYPE_MAP = new HashMap<>();
 
 	static {
-		TYPE_MAP.put("BIT", new String[] {"Boolean", "java.lang.Boolean"});
-		TYPE_MAP.put("TINYINT", new String[] {"Integer", "java.lang.Integer"});
-		TYPE_MAP.put("SMALLINT", new String[] {"Integer", "java.lang.Integer"});
-		TYPE_MAP.put("INT", new String[] {"Integer", "java.lang.Integer"});
-		TYPE_MAP.put("MEDIUMINT", new String[] {"Integer", "java.lang.Integer"});
 		TYPE_MAP.put("BIGINT", new String[] {"Long", "java.lang.Long"});
-		TYPE_MAP.put("FLOAT", new String[] {"Float", "java.lang.Float"});
-		TYPE_MAP.put("DOUBLE", new String[] {"Double", "java.lang.Double"});
-		TYPE_MAP.put("DECIMAL", new String[] {"BigDecimal", "java.math.BigDecimal"});
+		TYPE_MAP.put("BIGINT UNSIGNED", new String[] {"BigInteger", "java.math.BigInteger"});
+		TYPE_MAP.put("BIT", new String[] {"Boolean", "java.lang.Boolean"});
+		TYPE_MAP.put("BLOB", new String[] {"byte[]", "java.lang.byte[]"});
+		TYPE_MAP.put("CHAR", new String[] {"String", "java.lang.String"});
 		TYPE_MAP.put("DATE", new String[] {"LocalDateTime", "java.time.LocalDateTime"});
 		TYPE_MAP.put("DATETIME", new String[] {"LocalDateTime", "java.time.LocalDateTime"});
+		TYPE_MAP.put("DECIMAL", new String[] {"BigDecimal", "java.math.BigDecimal"});
+		TYPE_MAP.put("DOUBLE", new String[] {"Double", "java.lang.Double"});
+		TYPE_MAP.put("FLOAT", new String[] {"Float", "java.lang.Float"});
+		TYPE_MAP.put("INT", new String[] {"Integer", "java.lang.Integer"});
+		TYPE_MAP.put("INTEGER", new String[] {"Integer", "java.lang.Integer"});
+		TYPE_MAP.put("INTEGER UNSIGNED", new String[] {"Long", "java.lang.Long"});
+		TYPE_MAP.put("MEDIUMINT", new String[] {"Integer", "java.lang.Integer"});
+		TYPE_MAP.put("MEDIUMINT UNSIGNED", new String[] {"Integer", "java.lang.Integer"});
+		TYPE_MAP.put("SMALLINT", new String[] {"Integer", "java.lang.Integer"});
+		TYPE_MAP.put("SMALLINT UNSIGNED", new String[] {"Integer", "java.lang.Integer"});
+		TYPE_MAP.put("TINYINT", new String[] {"Integer", "java.lang.Integer"});
+		TYPE_MAP.put("TINYINT UNSIGNED", new String[] {"Integer", "java.lang.Integer"});
 		TYPE_MAP.put("TIMESTAMP", new String[] {"LocalDateTime", "java.time.LocalDateTime"});
-		TYPE_MAP.put("CHAR", new String[] {"String", "java.lang.String"});
 		TYPE_MAP.put("VARCHAR", new String[] {"String", "java.lang.String"});
 	}
 
