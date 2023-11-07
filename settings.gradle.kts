@@ -6,3 +6,4 @@ pluginManagement {
 }
 
 rootProject.name = "orm-generator"
+include("scripts")
