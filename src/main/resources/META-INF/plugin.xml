@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.github.bannirui.orm-generator</id>
     <name>ORM Generator</name>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <vendor email="Bannirui@outlook.com" url="https://github.com/Bannirui/orm-generator">Bannirui</vendor>
 
     <description><![CDATA[
@@ -14,6 +14,10 @@
   ]]></description>
 
 	<change-notes><![CDATA[
+		<p>1.0.3</p>
+		<ul>
+			<li>Discard `Lombok` dependency, generate `constructor`, `getter` and `setter`.</li>
+		</ul>
 		<p>1.0.2</p>
 		<ul>
 			<li>rm API with `org.jetbrains.annotations.ApiStatus.Internal`, and update with replacement.</li>

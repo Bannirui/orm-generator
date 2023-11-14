@@ -15,9 +15,9 @@ public class CodeGenUtilTest extends TestCase {
 
 	static {
 		List<Column> cols = new ArrayList<>();
-		cols.add(new Column("id", "id", "BIGINT", "Long", "java.lang.Long", "primary key", true));
-		cols.add(new Column("user_name", "userName", "VARCHAR", "String", "java.lang.String", "user name"));
-		cols.add(new Column("user_age", "userAge", "INT", "Integer", "java.lang.Integer", "user age"));
+		cols.add(new Column("id", "id","Id", "BIGINT", "Long", "java.lang.Long", "primary key", true));
+		cols.add(new Column("user_name", "userName", "UserName", "VARCHAR", "String", "java.lang.String", "user name"));
+		cols.add(new Column("user_age", "userAge", "UserAge", "INT", "Integer", "java.lang.Integer", "user age"));
 		t = new Table("test_table", "test table's comment", cols);
 	}
 

@@ -2,11 +2,14 @@ package com.github.bannirui.ormgenerator.bean;
 
 public class Column {
 
-	// tb_user
+	// like tb_user
 	private String lowerUnderscoreName;
 
-	// tbUser
+	// like tbUser
 	private String lowerCamelName;
+
+	// like TbUser
+	private String upperCamelName;
 
 	/**
 	 * <p>Type, like</p>
@@ -46,9 +49,11 @@ public class Column {
 	 */
 	private boolean primaryKey;
 
-	public Column(String lowerUnderscoreName, String lowerCamelName, String dbType, String jdkType, String jdkLangType, String comment) {
+	public Column(String lowerUnderscoreName, String lowerCamelName, String upperCamelName, String dbType, String jdkType, String jdkLangType,
+				  String comment) {
 		this.lowerUnderscoreName = lowerUnderscoreName;
 		this.lowerCamelName = lowerCamelName;
+		this.upperCamelName = upperCamelName;
 		this.dbType = dbType;
 		this.jdkType = jdkType;
 		this.jdkLangType = jdkLangType;
@@ -56,9 +61,9 @@ public class Column {
 		this.primaryKey = false;
 	}
 
-	public Column(String lowerUnderscoreName, String lowerCamelName, String dbType, String jdkType, String jdkLangType, String comment,
-				  boolean primaryKey) {
-		this(lowerUnderscoreName, lowerCamelName, dbType, jdkType, jdkLangType, comment);
+	public Column(String lowerUnderscoreName, String lowerCamelName, String upperCamelName, String dbType, String jdkType, String jdkLangType,
+				  String comment, boolean primaryKey) {
+		this(lowerUnderscoreName, lowerCamelName, upperCamelName, dbType, jdkType, jdkLangType, comment);
 		this.primaryKey = primaryKey;
 	}
 
@@ -68,6 +73,10 @@ public class Column {
 
 	public String getLowerCamelName() {
 		return lowerCamelName;
+	}
+
+	public String getUpperCamelName() {
+		return upperCamelName;
 	}
 
 	public String getDbType() {

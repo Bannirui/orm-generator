@@ -23,7 +23,7 @@ public class Table {
 
 	static {
 		TYPE_MAP.put("BIGINT", new String[] {"Long", "java.lang.Long"});
-		TYPE_MAP.put("BIGINT UNSIGNED", new String[] {"BigInteger", "java.math.BigInteger"});
+		TYPE_MAP.put("BIGINT UNSIGNED", new String[] {"Long", "java.lang.Long"});
 		TYPE_MAP.put("BIT", new String[] {"Boolean", "java.lang.Boolean"});
 		TYPE_MAP.put("BLOB", new String[] {"byte[]", "java.lang.byte[]"});
 		TYPE_MAP.put("CHAR", new String[] {"String", "java.lang.String"});
@@ -33,8 +33,9 @@ public class Table {
 		TYPE_MAP.put("DOUBLE", new String[] {"Double", "java.lang.Double"});
 		TYPE_MAP.put("FLOAT", new String[] {"Float", "java.lang.Float"});
 		TYPE_MAP.put("INT", new String[] {"Integer", "java.lang.Integer"});
+		TYPE_MAP.put("INT UNSIGNED", new String[] {"Integer", "java.lang.Integer"});
 		TYPE_MAP.put("INTEGER", new String[] {"Integer", "java.lang.Integer"});
-		TYPE_MAP.put("INTEGER UNSIGNED", new String[] {"Long", "java.lang.Long"});
+		TYPE_MAP.put("INTEGER UNSIGNED", new String[] {"Long", "java.lang.Integer"});
 		TYPE_MAP.put("MEDIUMINT", new String[] {"Integer", "java.lang.Integer"});
 		TYPE_MAP.put("MEDIUMINT UNSIGNED", new String[] {"Integer", "java.lang.Integer"});
 		TYPE_MAP.put("SMALLINT", new String[] {"Integer", "java.lang.Integer"});
@@ -71,6 +72,7 @@ public class Table {
 		for (DasColumn col : cols) {
 			String lowerUnderscoreName = col.getName();
 			String lowerCamelName = StrUtil.lowerScore2LowerCamel(lowerUnderscoreName);
+			String upperCamelName = StrUtil.lowerScore2UpperCamel(lowerUnderscoreName);
 			String dbType = col.getDataType().typeName.toUpperCase();
 			String comment = col.getComment();
 			boolean primary = DasUtil.isPrimary(col);
@@ -78,7 +80,7 @@ public class Table {
 			if (null == jdkType) {
 				throw new IllegalArgumentException("JdbcType[" + dbType + "] and JdkType mapping not support.");
 			}
-			this.columns.add(new Column(lowerUnderscoreName, lowerCamelName, dbType, jdkType[0], jdkType[1], comment, primary));
+			this.columns.add(new Column(lowerUnderscoreName, lowerCamelName, upperCamelName, dbType, jdkType[0], jdkType[1], comment, primary));
 		}
 		this.primaryKey = this.columns.stream().filter(Column::isPrimaryKey).findFirst().orElseGet(() -> null);
 	}

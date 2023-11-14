@@ -26,11 +26,12 @@ public class ModelGenerator extends AbstractCodeGenerator {
 	protected void doGen() {
 		Map<String, Object> data = new HashMap<>();
 		data.put(MODEL_PACKAGE_NAME, this.profile.getModelPackage());
-		data.put(TABLE_NAME, this.table.getName());
+		String tableName = this.table.getName();
+		data.put(TABLE_NAME, tableName);
 		data.put(TABLE_COMMENT, this.table.getComment());
 		data.put(DATE, LocalDateTime.now().format(DATE_TIME_FORMATTER));
 		data.put(AUTHOR, System.getenv().get(SYS_USER));
-		String className = StrUtil.lowerScore2UpperCamel(this.table.getName());
+		String className = StrUtil.lowerScore2UpperCamel(tableName);
 		data.put(CLASS_NAME, className);
 		data.put(COLUMNS, this.table.getColumns());
 		String[] err = new String[1];
