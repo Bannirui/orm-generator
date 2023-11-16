@@ -6,15 +6,21 @@ public class Profile {
 	private String moduleName;
 
 	// model
+	// like, com.model
 	private String modelPackage;
+	// like, /Users/dingrui/MyDev/code/java/plugin-test/ma/src/main/java
 	private String modelSrcDir;
 
 	// dao
+	// like, com.dao
 	private String daoPackage;
+	// like, /Users/dingrui/MyDev/code/java/plugin-test/ma/src/main/java
 	private String daoSrcDir;
 
 	// mapper
+	// like, com.mapper
 	private String mapperDir;
+	// like, /Users/dingrui/MyDev/code/java/plugin-test/ma/src/main/resources
 	private String mapperResourcesDir;
 
 	public Profile() {

@@ -1,9 +1,6 @@
 package ${model_package_name};
 
 import java.io.Serializable;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * ${table_name}.
@@ -92,11 +89,11 @@ public class ${class_name} implements Serializable {
     }
         <#elseif (column.dbType = 'DECIMAL')>
 
-    public DECIMAL get${column.upperCamelName}(){
+    public BigDecimal get${column.upperCamelName}(){
         return this.${column.lowerCamelName};
     }
 
-    public void set${column.upperCamelName}(DECIMAL ${column.lowerCamelName}){
+    public void set${column.upperCamelName}(BigDecimal ${column.lowerCamelName}){
         this.${column.lowerCamelName}=${column.lowerCamelName};
     }
         <#elseif (column.dbType = 'DOUBLE')>

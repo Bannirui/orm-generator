@@ -15,14 +15,13 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
+import java.awt.Dimension;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import javax.swing.AbstractAction;
+import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,26 +33,31 @@ import org.jetbrains.jps.model.java.JavaSourceRootType;
 
 public class EntryDialog extends DialogWrapper {
 
+	private static final int COMPONENT_GAP_5PX = 5;
+	private static final int COMPONENT_GAP_40PX = 40;
+	private static final int COMPONENT_GAP_400PX = 400;
+
+	private static final int LABEL_WIDTH = 150;
+	private static final int LABEL_HEIGHT = 60;
+	private static final int TF_COLS = 50;
+	private static final int COMBO_BOX_WIDTH = 60;
+
 	// project's module
 	private Deque<Module> modules;
 	private Map<String, Module> moduleMap;
 
-	private JPanel mainPanel;
+	private JPanel panel;
 
-	// module
-	private ComboBox<Object> moduleComboBox;
+	private JLabel moduleLabel;
 
-	// model
-	private JTextField modelPackageVal;
-	private JTextField modelSrcDirVal;
+	private ComboBox<String> moduleComboBox;
 
-	// dao
-	private JTextField daoPackageVal;
-	private JTextField daoSrcDirVal;
+	private String[] packages = {"Model package", "Dao package", "Mapper package"};
+	private String[] dirs = {"Model source dir", "Dao source dir", "Mapper resource dir"};
 
-	// mapper
-	private JTextField mapperDirVal;
-	private JTextField mapperResourcesDir;
+	private JLabel[] labels;
+
+	private JTextField[] tfs;
 
 	// Global profile
 	private Profile profile;
@@ -68,15 +72,31 @@ public class EntryDialog extends DialogWrapper {
 		// list all modules of cur project
 		this.modules = new ArrayDeque<>();
 		this.moduleMap = new HashMap<>();
-		this.initModules(p);
-		// panel
+		this.panel = new JPanel(new BorderLayout());
+		this.moduleLabel = new JLabel("Module name");
+		this.moduleComboBox = new ComboBox<>(COMBO_BOX_WIDTH);
+		this.labels = new JLabel[6];
+		for (int i = 0; i < 3; i++) {
+			JLabel l1 = new JLabel(this.packages[i]);
+			l1.setPreferredSize(new Dimension(this.LABEL_WIDTH, this.LABEL_HEIGHT));
+			this.labels[2 * i] = l1;
+			JLabel l2 = new JLabel(this.dirs[i]);
+			l2.setPreferredSize(new Dimension(this.LABEL_WIDTH, this.LABEL_HEIGHT));
+			this.labels[2 * i + 1] = l2;
+		}
+		this.tfs = new JTextField[6];
+		for (int i = 0; i < 6; i++) {
+			this.tfs[i] = new JTextField(this.TF_COLS);
+		}
+		this.initProjModules(p);
+		// panel layout
 		this.initPanel();
 		this.initData();
 		super.init();
-		super.setTitle("GEN INVOKE->" + t.getName());
+		super.setTitle(t.getName());
 	}
 
-	private void initModules(Project p) {
+	private void initProjModules(Project p) {
 		Module[] modules = ModuleManager.getInstance(p).getModules();
 		for (Module m : modules) {
 			// source directory: src/main/java, order the modules
@@ -90,90 +110,57 @@ public class EntryDialog extends DialogWrapper {
 	}
 
 	private void initPanel() {
-		this.mainPanel = new JPanel(new GridLayout(7, 1));
-		// module
-		this.mainPanel.add(this.initModulePanel(), 0);
-		// placeholder
-		this.mainPanel.add(this.initPlaceholderPanel(), 1);
-		// model
-		this.mainPanel.add(this.initModelPanel(), 2);
-		this.mainPanel.add(this.initPlaceholderPanel(), 3);
-		// dao
-		this.mainPanel.add(this.initDaoPanel(), 4);
-		this.mainPanel.add(this.initPlaceholderPanel(), 5);
-		// mapper
-		this.mainPanel.add(this.initMapperPanel(), 6);
+		this.panel.add(this.moduleBox(), BorderLayout.NORTH);
+		this.panel.add(this.dataBox());
 	}
 
-	private JPanel initModulePanel() {
-		JPanel panel = new JPanel(new BorderLayout());
-		JLabel label = new JLabel();
-		label.setText("Module:");
-		panel.add(label, BorderLayout.WEST);
-		moduleComboBox = new ComboBox<>();
-		moduleComboBox.setSwingPopup(false);
-		moduleComboBox.addActionListener(new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				String moduleName = (String) moduleComboBox.getSelectedItem();
-				if (StringUtils.isBlank(moduleName)) {
-					return;
-				}
-				EntryDialog.this.selectModule(moduleName);
+	private Box moduleBox() {
+		Box box = Box.createHorizontalBox();
+		this.moduleLabel.setPreferredSize(new Dimension(this.LABEL_WIDTH, this.LABEL_HEIGHT));
+		box.add(this.moduleLabel);
+		// 间隔
+		box.add(Box.createHorizontalStrut(COMPONENT_GAP_400PX));
+		this.moduleComboBox.setSwingPopup(false);
+		this.moduleComboBox.addActionListener(e -> {
+			String moduleName = (String) EntryDialog.this.moduleComboBox.getSelectedItem();
+			if (StringUtils.isBlank(moduleName)) {
+				return;
 			}
+			EntryDialog.this.moduleSelected(moduleName);
 		});
-		panel.add(moduleComboBox, BorderLayout.EAST);
-		return panel;
+		box.add(this.moduleComboBox);
+		return box;
 	}
 
-	private JPanel initModelPanel() {
-		JPanel panel = new JPanel(new GridLayout(2, 2));
-		JLabel modelPackageAttr = new JLabel();
-		modelPackageAttr.setText("Model package:");
-		panel.add(modelPackageAttr, 0);
-		this.modelPackageVal = new JTextField();
-		panel.add(this.modelPackageVal, 1);
-		JLabel modelSrcDirAttr = new JLabel();
-		modelSrcDirAttr.setText("Model source dir:");
-		panel.add(modelSrcDirAttr, 2);
-		this.modelSrcDirVal = new JTextField();
-		panel.add(this.modelSrcDirVal, 3);
-		return panel;
+	private Box dataBox() {
+		Box box = Box.createVerticalBox();
+		for (int i = 0; i < 3; i++) {
+			// 组件间隔
+			box.add(Box.createVerticalStrut(COMPONENT_GAP_40PX));
+			box.add(this.packageAndDir(i));
+		}
+		return box;
 	}
 
-	private JPanel initDaoPanel() {
-		JPanel panel = new JPanel(new GridLayout(2, 2));
-		JLabel daoPackageAttr = new JLabel();
-		daoPackageAttr.setText("Dao package:");
-		panel.add(daoPackageAttr, 0);
-		this.daoPackageVal = new JTextField();
-		panel.add(this.daoPackageVal, 1);
-		JLabel daoSrcDirAttr = new JLabel();
-		daoSrcDirAttr.setText("Dao source dir:");
-		panel.add(daoSrcDirAttr, 2);
-		this.daoSrcDirVal = new JTextField();
-		panel.add(this.daoSrcDirVal, 3);
-		return panel;
+	private Box packageAndDir(int i) {
+		Box box = Box.createVerticalBox();
+		// package
+		box.add(this.labelAndText(2 * i));
+		// 组件间隔
+		box.add(Box.createVerticalStrut(COMPONENT_GAP_5PX));
+		// dir
+		box.add(this.labelAndText(2 * i + 1));
+		return box;
 	}
 
-	private JPanel initMapperPanel() {
-		JPanel panel = new JPanel(new GridLayout(2, 2));
-		JLabel mapperDirAttr = new JLabel();
-		mapperDirAttr.setText("Mapper dir:");
-		panel.add(mapperDirAttr, 0);
-		this.mapperDirVal = new JTextField();
-		panel.add(this.mapperDirVal, 1);
-		JLabel mapperResourcesDirAttr = new JLabel();
-		mapperResourcesDirAttr.setText("Mapper resources dir:");
-		panel.add(mapperResourcesDirAttr, 2);
-		this.mapperResourcesDir = new JTextField();
-		panel.add(this.mapperResourcesDir, 3);
-		return panel;
-	}
-
-	private JPanel initPlaceholderPanel() {
-		JPanel panel = new JPanel(new BorderLayout());
-		return panel;
+	private Box labelAndText(int i) {
+		Box box = Box.createHorizontalBox();
+		// label
+		box.add(this.labels[i]);
+		box.add(Box.createHorizontalStrut(COMPONENT_GAP_40PX));
+		// text field
+		box.add(this.tfs[i]);
+		return box;
 	}
 
 	private void initData() {
@@ -181,30 +168,37 @@ public class EntryDialog extends DialogWrapper {
 		for (Module module : this.modules) {
 			this.moduleComboBox.addItem(module.getName());
 		}
-		// TODO: 10/25/23 Assign default value for text field
 	}
 
-	private void selectModule(String moduleName) {
-		if (StringUtils.isBlank(moduleName)) {
+	private void moduleSelected(String moduleName) {
+		Module m = null;
+		if (StringUtils.isBlank(moduleName) || Objects.isNull(m = this.moduleMap.get(moduleName))){
 			return;
 		}
-		Module m = this.moduleMap.get(moduleName);
 		VirtualFile vf = ProjectUtil.guessModuleDir(m);
 		if (Objects.isNull(vf)) {
 			return;
 		}
+		// module path, like, /Users/dingrui/MyDev/code/java/plugin-test/ma
 		String path = vf.getPath();
-		this.modelPackageVal.setText("com.model");
-		this.modelSrcDirVal.setText(path);
-		this.daoPackageVal.setText("com.dao");
-		this.daoSrcDirVal.setText(path);
-		this.mapperDirVal.setText("mapper");
-		this.mapperResourcesDir.setText(path);
+		String src = path + "/src/main/java";
+		String resource = path + "/src/main/resources";
+		// model
+		this.tfs[0].setText("com.model");
+		this.tfs[1].setText(src);
+		// dao
+		this.tfs[2].setText("com.dao");
+		this.tfs[3].setText(src);
+		// mapper
+		this.tfs[4].setText("com.mapper");
+		this.tfs[5].setText(resource);
 	}
 
 	@Override
 	protected @Nullable JComponent createCenterPanel() {
-		return this.mainPanel;
+		this.pack();
+		this.panel.setVisible(true);
+		return this.panel;
 	}
 
 	@Override
@@ -215,48 +209,51 @@ public class EntryDialog extends DialogWrapper {
 
 	private void doOK() {
 		this.collectProfile();
-		// TODO: 10/25/23 freemarker
 		new ModelGenerator(this.project, this.table, this.profile).gen();
 		new DaoGenerator(this.project, this.table, this.profile).gen();
 		new MapperGenerator(this.project, this.table, this.profile).gen();
 	}
 
 	private void collectProfile() {
-		// Collect user profile
-		// Just suggest assign module
 		String moduleName = (String) this.moduleComboBox.getSelectedItem();
 		this.profile.setModuleName(moduleName);
-		String modelPackage = this.modelPackageVal.getText();
+		// like, com.model
+		String modelPackage = this.tfs[0].getText();
 		if (StringUtils.isBlank(modelPackage)) {
 			Messages.showWarningDialog("Model package could not be none.", "Notice");
 			return;
 		}
 		this.profile.setModelPackage(modelPackage.replaceAll(" ", ""));
-		String modelSrcDir = this.modelSrcDirVal.getText();
+		// like, /Users/dingrui/MyDev/code/java/plugin-test/ma/src/main/java
+		String modelSrcDir = this.tfs[1].getText();
 		if (StringUtils.isBlank(modelSrcDir)) {
 			Messages.showWarningDialog("Model source dir could not be none.", "Notice");
 			return;
 		}
 		this.profile.setModelSrcDir(modelSrcDir.replaceAll(" ", ""));
-		String daoPackage = this.daoPackageVal.getText();
+		// like, com.dao
+		String daoPackage = this.tfs[2].getText();
 		if (StringUtils.isBlank(daoPackage)) {
 			Messages.showWarningDialog("Dao package could not be none.", "Notice");
 			return;
 		}
 		this.profile.setDaoPackage(daoPackage.replaceAll(" ", ""));
-		String daoSrcDir = this.daoSrcDirVal.getText();
+		// like, /Users/dingrui/MyDev/code/java/plugin-test/ma/src/main/java
+		String daoSrcDir = this.tfs[3].getText();
 		if (StringUtils.isBlank(daoSrcDir)) {
 			Messages.showWarningDialog("Dao source dir could not be none.", "Notice");
 			return;
 		}
 		this.profile.setDaoSrcDir(daoSrcDir.replaceAll("f", ""));
-		String mapperDir = this.mapperDirVal.getText();
+		// like, com.mapper
+		String mapperDir = this.tfs[4].getText();
 		if (StringUtils.isBlank(mapperDir)) {
 			Messages.showWarningDialog("Mapper directory could not be none.", "Notice");
 			return;
 		}
 		this.profile.setMapperDir(mapperDir.replaceAll(" ", ""));
-		String mapperResourcesDir = this.mapperResourcesDir.getText();
+		// like, /Users/dingrui/MyDev/code/java/plugin-test/ma/src/main/resources
+		String mapperResourcesDir = this.tfs[5].getText();
 		if (StringUtils.isBlank(mapperResourcesDir)) {
 			Messages.showWarningDialog("Mapper resource directory could not be none.", "Notice");
 			return;

@@ -9,7 +9,7 @@
 - [X] trim the path if blank exists
 - [ ] state persistence
 - [X] more mysql field type
-- [ ] select box for package since selecting the module
+- [X] select box for package since selecting the module
 - [X] rm Lombok annotation
-- [ ] main dialog UI refactor, especially format and color
+- [X] main dialog UI refactor, especially format and color
 - [ ] multiple table selections(may be a for loop in source code or async, but should take exception throw into consideration)

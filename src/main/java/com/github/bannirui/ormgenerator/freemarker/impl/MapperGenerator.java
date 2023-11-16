@@ -38,11 +38,13 @@ public class MapperGenerator extends AbstractCodeGenerator {
 			data.put(PRIMARY_KEY, primaryKey);
 		}
 		data.put(COLUMNS, this.table.getColumns());
+		String dir = this.profile.getMapperResourcesDir();
+		String path = dir + File.separator + this.profile.getMapperDir().replaceAll("\\.", File.separator);
 		String[] err = new String[1];
 		boolean b = super.genFile(
 				project,
 				FreemakerTemplateMgr.MAPPER_TEMPLATE_NAME,
-				this.profile.getMapperResourcesDir() + File.separator + this.profile.getMapperDir(),
+				path,
 				className + FreemakerTemplateMgr.MAPPER_TEMPLATE_SUFFIX,
 				data,
 				s -> err[0] = s);

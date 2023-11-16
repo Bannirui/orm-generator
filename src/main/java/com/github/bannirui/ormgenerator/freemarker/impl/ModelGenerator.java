@@ -6,6 +6,7 @@ import com.github.bannirui.ormgenerator.constant.FreemakerTemplateMgr;
 import com.github.bannirui.ormgenerator.freemarker.AbstractCodeGenerator;
 import com.github.bannirui.ormgenerator.utility.StrUtil;
 import com.intellij.openapi.project.Project;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +26,8 @@ public class ModelGenerator extends AbstractCodeGenerator {
 	@Override
 	protected void doGen() {
 		Map<String, Object> data = new HashMap<>();
-		data.put(MODEL_PACKAGE_NAME, this.profile.getModelPackage());
+		String packageName = this.profile.getModelPackage();
+		data.put(MODEL_PACKAGE_NAME, packageName);
 		String tableName = this.table.getName();
 		data.put(TABLE_NAME, tableName);
 		data.put(TABLE_COMMENT, this.table.getComment());
@@ -34,12 +36,13 @@ public class ModelGenerator extends AbstractCodeGenerator {
 		String className = StrUtil.lowerScore2UpperCamel(tableName);
 		data.put(CLASS_NAME, className);
 		data.put(COLUMNS, this.table.getColumns());
+		String dir = this.profile.getModelSrcDir();
+		String path = dir + File.separator + packageName.replaceAll("\\.", File.separator);
 		String[] err = new String[1];
-
 		boolean b = super.genFile(
 				this.project,
 				FreemakerTemplateMgr.MODEL_TEMPLATE_NAME,
-				this.profile.getModelSrcDir(),
+				path,
 				className + FreemakerTemplateMgr.MODEL_TEMPLATE_SUFFIX,
 				data,
 				s -> err[0] = s);
