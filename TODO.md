@@ -13,3 +13,4 @@
 - [X] rm Lombok annotation
 - [X] main dialog UI refactor, especially format and color
 - [ ] multiple table selections(may be a for loop in source code or async, but should take exception throw into consideration)
+- [X] [provide directory select support, it would be useful sometimes](./doc/img/2023-11-21_10-45-12.png)

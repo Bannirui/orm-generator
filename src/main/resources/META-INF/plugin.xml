@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.github.bannirui.orm-generator</id>
     <name>ORM Generator</name>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <vendor email="Bannirui@outlook.com" url="https://github.com/Bannirui/orm-generator">Bannirui</vendor>
 
     <description><![CDATA[
@@ -14,6 +14,12 @@
   ]]></description>
 
 	<change-notes><![CDATA[
+		<p>1.0.5</p>
+		<ul>
+			<li>UI component with border.</li>
+			<li>Support directory path select.</li>
+		</ul>
+		<br>
 		<p>1.0.4</p>
 		<ul>
 			<li>awt UI refactor with layout.</li>
