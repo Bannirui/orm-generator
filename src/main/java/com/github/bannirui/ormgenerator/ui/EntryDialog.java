@@ -165,6 +165,9 @@ public class EntryDialog extends DialogWrapper {
 			}
 			EntryDialog.this.moduleSelected(moduleName);
 		});
+		for (Module module : this.modules) {
+			this.moduleCheckBox.addItem(module.getName());
+		}
 		moduleBox.add(Box.createHorizontalStrut(COMPONENT_GAP_5PX));
 		moduleBox.add(this.labels[0]);
 		moduleBox.add(Box.createHorizontalStrut(COMPONENT_GAP_500PX));
@@ -173,10 +176,6 @@ public class EntryDialog extends DialogWrapper {
 		box.add(Box.createVerticalStrut(COMPONENT_GAP_40PX));
 		// 数据表列
 		this.dbPrimaryKeyCb = new ComboBox<>(COMBO_BOX_WIDTH);
-		for (Column column : this.table.getColumns()) {
-			// 在下拉框显示的是column实例的toString方法
-			this.dbPrimaryKeyCb.addItem(column);
-		}
 		this.dbPrimaryKeyCb.addActionListener(e -> {
 			Column col = (Column) EntryDialog.this.dbPrimaryKeyCb.getSelectedItem();
 			if (Objects.isNull(col)) {
@@ -187,6 +186,19 @@ public class EntryDialog extends DialogWrapper {
 			this.tfs[0].setText(jdbcType);
 			this.tfs[1].setText(javaType);
 		});
+		Deque<Column> cols = new ArrayDeque<>();
+		for (Column col : this.table.getColumns()) {
+			// 推断出primary key放到 队列头 将来放到首个下拉选项
+			if (col.isPrimaryKey()) {
+				cols.offerFirst(col);
+			} else {
+				cols.offerLast(col);
+			}
+		}
+		for (Column col : cols) {
+			// 在下拉框显示的是column实例的toString方法
+			this.dbPrimaryKeyCb.addItem(col);
+		}
 		// 数据库
 		Box dbBox = Box.createHorizontalBox();
 		dbBox.setBorder(BorderFactory.createTitledBorder(new LineBorder(JBColor.BLACK), "db info", TitledBorder.LEFT, TitledBorder.TOP));
@@ -280,9 +292,7 @@ public class EntryDialog extends DialogWrapper {
 
 	private void initData() {
 		this.profile = new Profile();
-		for (Module module : this.modules) {
-			this.moduleCheckBox.addItem(module.getName());
-		}
+		// 项目模块下拉框
 	}
 
 	private void moduleSelected(String moduleName) {
