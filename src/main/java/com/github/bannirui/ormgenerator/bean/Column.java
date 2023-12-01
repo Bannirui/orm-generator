@@ -98,4 +98,9 @@ public class Column {
 	public boolean isPrimaryKey() {
 		return primaryKey;
 	}
+
+	@Override
+	public String toString() {
+		return this.lowerUnderscoreName;
+	}
 }

@@ -1,11 +1,11 @@
-package com.github.bannirui.ormgenerator.dialog;
+package com.github.bannirui.ormgenerator.ui;
 
+import com.github.bannirui.ormgenerator.bean.Column;
 import com.github.bannirui.ormgenerator.bean.Table;
 import com.github.bannirui.ormgenerator.config.Profile;
 import com.github.bannirui.ormgenerator.freemarker.impl.DaoGenerator;
 import com.github.bannirui.ormgenerator.freemarker.impl.MapperGenerator;
 import com.github.bannirui.ormgenerator.freemarker.impl.ModelGenerator;
-import com.github.bannirui.ormgenerator.ui.MainPanel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -60,8 +60,14 @@ public class EntryDialog extends DialogWrapper {
 	// 模块下拉
 	private ComboBox<String> moduleCheckBox;
 
+	// 数据库表列名下拉
+	private ComboBox<Column> dbPrimaryKeyCb;
+
 	private String[] labelAttrs = {
 			"Module Name",
+			"column",
+			"jdbc type",
+			"java type",
 			"Model  Package",
 			"Model      Dir",
 			"Dao    Package",
@@ -72,6 +78,8 @@ public class EntryDialog extends DialogWrapper {
 	private JLabel[] labels;
 
 	private String[] tfAttrs = {
+			"jdbc type",
+			"java type",
 			"Model Package",
 			"Model Source Dir",
 			"Dao Package",
@@ -105,7 +113,7 @@ public class EntryDialog extends DialogWrapper {
 		this.modules = new ArrayDeque<>();
 		this.moduleMap = new HashMap<>();
 		this.panel = new MainPanel();
-		this.initProjModules(p);
+		this.initProjModuleInfo();
 		// panel layout
 		this.panel.add(this.initPanel());
 		this.initData();
@@ -113,8 +121,15 @@ public class EntryDialog extends DialogWrapper {
 		super.setTitle(t.getName());
 	}
 
-	private void initProjModules(Project p) {
-		Module[] modules = ModuleManager.getInstance(p).getModules();
+	/**
+	 * 初始化下拉框组件
+	 * <ul>
+	 *     <li>项目模块</li>
+	 * </ul>
+	 */
+	private void initProjModuleInfo() {
+		// 项目模块
+		Module[] modules = ModuleManager.getInstance(this.project).getModules();
 		for (Module m : modules) {
 			if (CollectionUtils.isEmpty(ModuleRootManager.getInstance(m).getSourceRoots(JavaSourceRootType.SOURCE))) {
 				this.modules.addLast(m);
@@ -130,6 +145,11 @@ public class EntryDialog extends DialogWrapper {
 		this.labels = new JLabel[labelSz];
 		for (int i = 0; i < labelSz; i++) {
 			this.labels[i] = new JLabel(this.labelAttrs[i]);
+		}
+		int tfSz = this.tfAttrs.length;
+		this.tfs = new JTextField[tfSz];
+		for (int i = 0; i < tfSz; i++) {
+			this.tfs[i] = new JTextField(TF_COLS);
 		}
 
 		Box box = Box.createVerticalBox();
@@ -149,12 +169,45 @@ public class EntryDialog extends DialogWrapper {
 		moduleBox.add(this.labels[0]);
 		moduleBox.add(Box.createHorizontalStrut(COMPONENT_GAP_500PX));
 		moduleBox.add(this.moduleCheckBox);
-		// 源码路径
-		int tfSz = this.tfAttrs.length;
-		this.tfs = new JTextField[tfSz];
-		for (int i = 0; i < tfSz; i++) {
-			this.tfs[i] = new JTextField(TF_COLS);
+		box.add(moduleBox);
+		box.add(Box.createVerticalStrut(COMPONENT_GAP_40PX));
+		// 数据表列
+		this.dbPrimaryKeyCb = new ComboBox<>(COMBO_BOX_WIDTH);
+		for (Column column : this.table.getColumns()) {
+			// 在下拉框显示的是column实例的toString方法
+			this.dbPrimaryKeyCb.addItem(column);
 		}
+		this.dbPrimaryKeyCb.addActionListener(e -> {
+			Column col = (Column) EntryDialog.this.dbPrimaryKeyCb.getSelectedItem();
+			if (Objects.isNull(col)) {
+				return;
+			}
+			String jdbcType = col.getDbType();
+			String javaType = col.getJdkType();
+			this.tfs[0].setText(jdbcType);
+			this.tfs[1].setText(javaType);
+		});
+		// 数据库
+		Box dbBox = Box.createHorizontalBox();
+		dbBox.setBorder(BorderFactory.createTitledBorder(new LineBorder(JBColor.BLACK), "db info", TitledBorder.LEFT, TitledBorder.TOP));
+		Box b1 = Box.createVerticalBox();
+		b1.add(this.labels[1]);
+		b1.add(Box.createVerticalStrut(COMPONENT_GAP_10PX));
+		b1.add(this.dbPrimaryKeyCb);
+		dbBox.add(b1);
+		Box b2 = Box.createVerticalBox();
+		b2.add(this.labels[2]);
+		b2.add(Box.createVerticalStrut(COMPONENT_GAP_10PX));
+		b2.add(this.tfs[0]);
+		dbBox.add(b2);
+		Box b3 = Box.createVerticalBox();
+		b3.add(this.labels[3]);
+		b3.add(Box.createVerticalStrut(COMPONENT_GAP_10PX));
+		b3.add(this.tfs[1]);
+		dbBox.add(b3);
+		box.add(dbBox);
+		box.add(Box.createVerticalStrut(COMPONENT_GAP_40PX));
+		// 源码路径
 		int btnSz = this.btnNames.length;
 		this.btns = new JButton[btnSz];
 		for (int i = 0; i < btnSz; i++) {
@@ -184,9 +237,6 @@ public class EntryDialog extends DialogWrapper {
 		srcBox.add(this.subBox(1));
 		srcBox.add(Box.createVerticalStrut(COMPONENT_GAP_20PX));
 		srcBox.add(this.subBox(2));
-
-		box.add(moduleBox);
-		box.add(Box.createVerticalStrut(COMPONENT_GAP_40PX));
 		box.add(srcBox);
 		return box;
 	}
@@ -200,10 +250,11 @@ public class EntryDialog extends DialogWrapper {
 	 *          </ul>
 	 */
 	private Box subBox(int i) {
+		int j = i << 1;
 		// 文本框脚标
-		int x = i << 1;
+		int x = j + 2;
 		// label脚标
-		int y = x + 1;
+		int y = j + 4;
 		Box box = Box.createVerticalBox();
 		// package
 		Box b1 = Box.createHorizontalBox();
@@ -248,14 +299,14 @@ public class EntryDialog extends DialogWrapper {
 		String src = path + "/src/main/java";
 		String resource = path + "/src/main/resources";
 		// model
-		this.tfs[0].setText("com.model");
-		this.tfs[1].setText(src);
-		// dao
-		this.tfs[2].setText("com.dao");
+		this.tfs[2].setText("com.model");
 		this.tfs[3].setText(src);
+		// dao
+		this.tfs[4].setText("com.dao");
+		this.tfs[5].setText(src);
 		// mapper
-		this.tfs[4].setText("com.mapper");
-		this.tfs[5].setText(resource);
+		this.tfs[6].setText("com.mapper");
+		this.tfs[7].setText(resource);
 	}
 
 	@Override
@@ -288,22 +339,22 @@ public class EntryDialog extends DialogWrapper {
 			}
 		}
 		// like, com.model
-		String modelPackage = this.tfs[0].getText();
+		String modelPackage = this.tfs[2].getText();
 		this.profile.setModelPackage(modelPackage.replaceAll(" ", ""));
 		// like, /Users/dingrui/MyDev/code/java/plugin-test/ma/src/main/java
-		String modelSrcDir = this.tfs[1].getText();
+		String modelSrcDir = this.tfs[3].getText();
 		this.profile.setModelSrcDir(modelSrcDir.replaceAll(" ", ""));
 		// like, com.dao
-		String daoPackage = this.tfs[2].getText();
+		String daoPackage = this.tfs[4].getText();
 		this.profile.setDaoPackage(daoPackage.replaceAll(" ", ""));
 		// like, /Users/dingrui/MyDev/code/java/plugin-test/ma/src/main/java
-		String daoSrcDir = this.tfs[3].getText();
+		String daoSrcDir = this.tfs[5].getText();
 		this.profile.setDaoSrcDir(daoSrcDir.replaceAll(" ", ""));
 		// like, com.mapper
-		String mapperDir = this.tfs[4].getText();
+		String mapperDir = this.tfs[6].getText();
 		this.profile.setMapperDir(mapperDir.replaceAll(" ", ""));
 		// like, /Users/dingrui/MyDev/code/java/plugin-test/ma/src/main/resources
-		String mapperResourcesDir = this.tfs[5].getText();
+		String mapperResourcesDir = this.tfs[7].getText();
 		this.profile.setMapperResourcesDir(mapperResourcesDir.replaceAll(" ", ""));
 	}
 }

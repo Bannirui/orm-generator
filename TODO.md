@@ -15,5 +15,5 @@
 - [ ] multiple table selections(may be a for loop in source code or async, but should take exception throw into consideration)
 - [X] [provide directory select support, it would be useful sometimes](./doc/img/2023-11-21_10-45-12.png)
 - [ ] alternative api for database field type, like `JdbcUtil.getJdbcTypeName(col.getDataType(), false);`
-- [ ] provide access changing primary key, e,g, a dialog or a text field for inputting
+- [X] provide access changing primary key, e,g, a dialog or a text field for inputting
 - [ ] do not over-write all files

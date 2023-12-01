@@ -1,7 +1,7 @@
 package com.github.bannirui.ormgenerator.action;
 
 import com.github.bannirui.ormgenerator.bean.Table;
-import com.github.bannirui.ormgenerator.dialog.EntryDialog;
+import com.github.bannirui.ormgenerator.ui.EntryDialog;
 import com.intellij.database.psi.DbTable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
