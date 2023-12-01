@@ -1,6 +1,7 @@
 package com.github.bannirui.ormgenerator.ui;
 
 import com.github.bannirui.ormgenerator.bean.Column;
+import com.github.bannirui.ormgenerator.bean.MyModule;
 import com.github.bannirui.ormgenerator.bean.Table;
 import com.github.bannirui.ormgenerator.config.Profile;
 import com.github.bannirui.ormgenerator.freemarker.impl.DaoGenerator;
@@ -20,8 +21,6 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -51,14 +50,10 @@ public class EntryDialog extends DialogWrapper {
 	private static final int TF_COLS = 50;
 	private static final int COMBO_BOX_WIDTH = 120;
 
-	// project's module
-	private Deque<Module> modules;
-	private Map<String, Module> moduleMap;
-
 	private MainPanel panel;
 
 	// 模块下拉
-	private ComboBox<String> moduleCheckBox;
+	private ComboBox<MyModule> moduleCheckBox;
 
 	// 数据库表列名下拉
 	private ComboBox<Column> dbPrimaryKeyCb;
@@ -110,34 +105,12 @@ public class EntryDialog extends DialogWrapper {
 		super(p);
 		this.project = p;
 		this.table = t;
-		this.modules = new ArrayDeque<>();
-		this.moduleMap = new HashMap<>();
 		this.panel = new MainPanel();
-		this.initProjModuleInfo();
 		// panel layout
 		this.panel.add(this.initPanel());
 		this.initData();
 		super.init();
 		super.setTitle(t.getName());
-	}
-
-	/**
-	 * 初始化下拉框组件
-	 * <ul>
-	 *     <li>项目模块</li>
-	 * </ul>
-	 */
-	private void initProjModuleInfo() {
-		// 项目模块
-		Module[] modules = ModuleManager.getInstance(this.project).getModules();
-		for (Module m : modules) {
-			if (CollectionUtils.isEmpty(ModuleRootManager.getInstance(m).getSourceRoots(JavaSourceRootType.SOURCE))) {
-				this.modules.addLast(m);
-			} else {
-				this.modules.addFirst(m);
-			}
-			this.moduleMap.put(m.getName(), m);
-		}
 	}
 
 	private Box initPanel() {
@@ -159,14 +132,24 @@ public class EntryDialog extends DialogWrapper {
 		this.moduleCheckBox = new ComboBox<>(COMBO_BOX_WIDTH);
 		this.moduleCheckBox.setSwingPopup(false);
 		this.moduleCheckBox.addActionListener(e -> {
-			String moduleName = (String) EntryDialog.this.moduleCheckBox.getSelectedItem();
-			if (StringUtils.isBlank(moduleName)) {
+			MyModule module = (MyModule) EntryDialog.this.moduleCheckBox.getSelectedItem();
+			if (Objects.isNull(module)) {
 				return;
 			}
-			EntryDialog.this.moduleSelected(moduleName);
+			EntryDialog.this.moduleSelected(module);
 		});
-		for (Module module : this.modules) {
-			this.moduleCheckBox.addItem(module.getName());
+		// 项目模块
+		Deque<MyModule> modules = new ArrayDeque<>();
+		for (Module m : ModuleManager.getInstance(this.project).getModules()) {
+			if (CollectionUtils.isEmpty(ModuleRootManager.getInstance(m).getSourceRoots(JavaSourceRootType.SOURCE))) {
+				modules.addLast(new MyModule(m.getName(), m));
+			} else {
+				modules.addFirst(new MyModule(m.getName(), m));
+			}
+		}
+		for (MyModule module : modules) {
+			// 显示在下拉框的是实例的toString方法
+			this.moduleCheckBox.addItem(module);
 		}
 		moduleBox.add(Box.createHorizontalStrut(COMPONENT_GAP_5PX));
 		moduleBox.add(this.labels[0]);
@@ -295,12 +278,11 @@ public class EntryDialog extends DialogWrapper {
 		// 项目模块下拉框
 	}
 
-	private void moduleSelected(String moduleName) {
-		Module m = null;
-		if (StringUtils.isBlank(moduleName) || Objects.isNull(m = this.moduleMap.get(moduleName))) {
+	private void moduleSelected(MyModule m) {
+		if (Objects.isNull(m)) {
 			return;
 		}
-		VirtualFile vf = ProjectUtil.guessModuleDir(m);
+		VirtualFile vf = ProjectUtil.guessModuleDir(m.getModule());
 		if (Objects.isNull(vf)) {
 			return;
 		}
@@ -339,8 +321,8 @@ public class EntryDialog extends DialogWrapper {
 	}
 
 	private void collectProfile() {
-		String moduleName = (String) this.moduleCheckBox.getSelectedItem();
-		this.profile.setModuleName(moduleName);
+		MyModule module = (MyModule) this.moduleCheckBox.getSelectedItem();
+		this.profile.setModuleName(module.getName());
 		int sz = this.tfAttrs.length;
 		for (int i = 0; i < sz; i++) {
 			if (StringUtils.isBlank(this.tfs[i].getText())) {
