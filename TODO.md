@@ -17,3 +17,4 @@
 - [ ] alternative api for database field type, like `JdbcUtil.getJdbcTypeName(col.getDataType(), false);`
 - [X] provide access changing primary key, e,g, a dialog or a text field for inputting
 - [ ] do not over-write all files
+- [ ] use assigned primary key while freemarker generate
